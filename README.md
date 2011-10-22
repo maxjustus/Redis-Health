@@ -36,7 +36,9 @@ Use:
     RedisHealth.new(redis).run
 
 It calls your notifier block if a watch has been triggered for the specified number of seconds, passing it a list of triggered messages such as:
+
     ['HOLY **** TEH FAIL LOGZ IZ HUGE, value is now 100000', 'worker count fell below 2 for more then 1 minute, value is now 0']
 
 And calls it again if a watch ceases to trigger, with a list of triggered messages such as:
+
     ['HOLY **** TEH FAIL LOGZ IZ HUGE no longer in effect, value is 10', 'worker count fell below 2 for more then 1 minute no longer in effect, value is now 100000']
