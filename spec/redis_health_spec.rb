@@ -38,28 +38,31 @@ describe RedisHealth do
       no_longer_triggered_with_no_value = 'lame threshold exceeded'
 
       RedisHealth.configure do
-        watch(triggered, 5) do
+        watch(triggered, 5) do |redis|
           {triggered: true, value: 1}
         end
 
-        watch(no_longer_triggered, 4) do
+        watch(no_longer_triggered, 4) do |redis|
           {triggered: false, value: 30}
         end
 
-        watch(no_longer_triggered, 4) do
-          {triggered: false, value: 30}
+        watch(no_longer_triggered, 4) do |redis|
+          v = redis.keys('cool')
+          {triggered: v > 70, value: v}
         end
 
-        watch(no_longer_triggered_with_no_value, 4) do
-          {triggered: false}
+        watch(no_longer_triggered_with_no_value, 4) do |redis|
+          {triggered: (redis.keys('cool') < 2)}
         end
 
-        watch('not triggered', 3) do
+        watch('not triggered', 3) do |redis|
           {triggered: true, value: 1}
         end
       end
 
-      h = RedisHealth.new(nil)
+      redis = mock('Redis')
+      redis.stub(:keys).with('cool') { 30 }
+      h = RedisHealth.new(redis)
       h.triggered_times = {triggered => 5, no_longer_triggered => 400, no_longer_triggered_with_no_value => 5}
       h.execute_watches.should == [
         triggered + ', value is now 1',
@@ -68,9 +71,22 @@ describe RedisHealth do
       ]
     end
 
+    it 'passes redis instance into watcher' do
+      RedisHealth.configure do
+        watch('cool', 3) do |redis|
+          redis.cool
+          {triggered: false, value: 1}
+        end
+      end
+      r = mock('Redis')
+      r.should_receive(:cool)
+      h = RedisHealth.new(r)
+      h.execute_watches
+    end
+
     it 'returns notices for watches which were been triggered the amount of times configured, but are no longer' do
       RedisHealth.configure do
-        watch('cool', 3) do
+        watch('cool', 3) do |redis|
           {triggered: false, value: 1}
         end
       end
@@ -81,7 +97,7 @@ describe RedisHealth do
 
     it 'returns notices for watches which have been triggered the amount of times configured' do
       RedisHealth.configure do
-        watch('cool', 3) do
+        watch('cool', 3) do |redis|
           {triggered: true, value: 1}
         end
       end
@@ -92,7 +108,7 @@ describe RedisHealth do
 
     it 'does not return notices for watches which have already been trigged the amount of times configured' do
       RedisHealth.configure do
-        watch('cool', 3) do
+        watch('cool', 3) do |redis|
           {triggered: true, value: 1}
         end
       end
@@ -116,10 +132,10 @@ describe RedisHealth do
       triggered = 'cool thing 1'
       untriggered = 'whatever'
       RedisHealth.configure do
-        watch(triggered, 4) do
+        watch(triggered, 4) do |redis|
           {triggered: true, value: 44}
         end
-        watch(untriggered, 4) do
+        watch(untriggered, 4) do |redis|
           {triggered: false, value: 33}
         end
       end
@@ -134,7 +150,7 @@ describe RedisHealth do
       untriggered = 'whatever'
 
       RedisHealth.configure do
-        watch(untriggered, 4) do
+        watch(untriggered, 4) do |redis|
           {triggered: false}
         end
       end

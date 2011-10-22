@@ -35,7 +35,7 @@ class RedisHealth
       label, watcher_hash = watcher_array
       triggered_times[label] ||= 0
 
-      matcher_result = watcher_hash[:matcher].call
+      matcher_result = watcher_hash[:matcher].call(@redis)
       triggered = matcher_result[:triggered]
       value = matcher_result[:value]
       notice = append_label_value(label, value, triggered)
