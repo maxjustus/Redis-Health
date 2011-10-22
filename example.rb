@@ -6,11 +6,6 @@ RedisHealth.configure do
     {triggered: v < 2, value: v}
   end
 
-  watch('worker count fell below 2 for more then 1 minute', 60) do |redis|
-    v = redis.scard('resque:socialvolt:workers')
-    {triggered: v < 2, value: v}
-  end
-
   notify do |notices|
     p notices.join(', ')
   end
