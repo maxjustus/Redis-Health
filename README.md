@@ -1,4 +1,4 @@
-### Redis Health is a simple monitoring tool for Redis that notifies you when abnormal things are happening in Redis.
+### Redis Health is a simple monitoring tool for Redis that notifies you when abnormal things are happening.
 
 #### Install:
 
