@@ -1,10 +1,10 @@
 ### Redis Health is a simple monitoring tool for Redis that notifies you when abnormal things are happening in Redis.
 
-Install:
+#### Install:
 
     gem install 'redis-health'
 
-Use:
+#### Use:
 
     require 'redis'
     require 'redis_health'
