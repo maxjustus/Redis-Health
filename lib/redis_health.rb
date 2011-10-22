@@ -1,6 +1,7 @@
 require 'redis'
 
 class RedisHealth
+  VERSION = '0.0.1'
   attr_accessor :redis, :triggered_times
   @watchers = {}
 
