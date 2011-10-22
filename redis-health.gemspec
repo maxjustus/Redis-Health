@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/maxjustus/Redis-Health"
   s.license = 'MIT'
   s.summary = "Knowing is half the battle"
-  s.description = "When shit hits the fan in your redis db, Redis Health lets you know before your customers do"
+  s.description = "When shit hits the fan in your Redis db, Redis Health lets you know before your customers do"
   s.files = Dir["lib/**/*"] + ["README.md"]
   s.version = RedisHealth::VERSION
   s.add_dependency('redis')
